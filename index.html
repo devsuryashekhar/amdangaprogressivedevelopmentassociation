@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amdanga Progressive Development Association</title>
+  <style>
+    /* RESET & GLOBAL */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: linear-gradient(90deg,#0072ff,#00c6ff);
+      padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 999;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    nav .logo {
+      font-size: 1.6rem; font-weight: bold; color: #fff; letter-spacing: 1px;
+    }
+    nav ul {
+      list-style: none; display: flex; gap: 1.5rem;
+      transition: all 0.4s ease;
+    }
+    nav ul li a {
+      color: #fff; font-weight: bold;
+      padding: 0.5rem 1rem; border-radius: 5px;
+      transition: all 0.3s ease; position: relative;
+    }
+    nav ul li a:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+    }
+    nav ul li a:active { transform: scale(0.9); }
+
+    /* BURGER MENU */
+    .burger {
+      display: none; cursor: pointer; flex-direction: column; gap: 5px;
+      transition: transform 0.3s ease;
+    }
+    .burger div {
+      width: 25px; height: 3px; background: white;
+      border-radius: 3px; transition: all 0.3s ease;
+    }
+    .burger.active { transform: scale(1.2); }
+    .burger.active div:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .burger.active div:nth-child(2) { opacity: 0; }
+    .burger.active div:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
+
+    /* HERO */
+    header {
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+        url('https://images.unsplash.com/photo-1509099836639-18ba1795216d') center/cover no-repeat;
+      color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; padding: 2rem;
+    }
+    header h1 {
+      font-size: 3.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 8px #000;
+      animation: fadeDown 1.5s ease;
+    }
+    header p {
+      font-size: 1.2rem; margin-bottom: 2rem; animation: fadeUp 1.5s ease;
+    }
+    header a {
+      background: #ff9800; padding: 0.8rem 1.5rem; border-radius: 30px;
+      color: #fff; font-weight: bold; transition: 0.3s;
+      animation: popIn 1.5s ease;
+    }
+    header a:hover { background: #e65100; transform: scale(1.05); }
+    header a:active { transform: scale(0.9); }
+
+    /* SECTIONS */
+    section {
+      padding: 5rem 2rem; opacity: 0; transform: translateY(50px);
+      transition: all 0.8s ease-out;
+    }
+    section.visible { opacity: 1; transform: translateY(0); }
+    section h2 {
+      text-align: center; font-size: 2.5rem; margin-bottom: 2rem;
+      color: #0072ff;
+    }
+
+    /* ABOUT */
+    .about p {
+      max-width: 1000px; margin: auto; font-size: 1.2rem; text-align: center;
+      line-height: 1.8; color: #444;
+    }
+
+    /* TEAM SLIDER */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 2rem auto;
+      overflow: hidden;
+    }
+    .member-slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 100%;
+    }
+    .member {
+      min-width: 100%;
+      padding: 2rem 1rem;
+      text-align: center;
+      background: linear-gradient(135deg,#fff,#f0f8ff);
+      border-radius: 15px;
+      margin: 0 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .member img {
+      width: 180px; height: 180px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 4px solid #00c6ff;
+    }
+    .contact-buttons {
+      display: flex; justify-content: center; gap: 10px;
+      margin-top: 1rem; flex-wrap: wrap;
+    }
+    .contact-buttons a {
+      padding: 0.5rem 1rem; border-radius: 25px; font-size: 0.85rem;
+      color: #fff; font-weight: bold; transition: transform 0.3s;
+    }
+    .contact-buttons a:hover { transform: scale(1.1); }
+    .phone-btn { background: #00796b; }
+    .whatsapp-btn { background: #25d366; }
+    .map-btn { background: #ff9800; }
+
+    /* GLASSY SLIDER BUTTONS - smaller & transparent */
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      padding: 0.7rem 0.9rem; /* smaller size */
+      font-size: 1.5rem; /* smaller */
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+      color: #fff;
+      background: rgba(255,255,255,0.15); /* glassy transparent */
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 0.3s, background 0.3s, color 0.3s;
+    }
+    .slider-btn:hover {
+      transform: scale(1.15);
+      background: rgba(255,255,255,0.25);
+      color: #0072ff;
+    }
+    .slider-btn.prev { left: 10px; }
+    .slider-btn.next { right: 10px; }
+
+    /* ACTIVITIES */
+    .activities-list {
+      display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 2rem;
+    }
+    .activity {
+      background: #fff; border-radius: 15px; padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s;
+    }
+    .activity:hover { transform: translateY(-5px); }
+    .activity h3 { color: #e91e63; margin-bottom: 0.5rem; }
+
+    /* CONTACT */
+    .contact-form {
+      max-width: 600px; margin: auto; background: #fff;
+      padding: 2rem; border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .contact-form input, .contact-form textarea {
+      width: 100%; margin: 0.5rem 0; padding: 0.7rem;
+      border: 1px solid #ccc; border-radius: 8px; transition: border 0.3s;
+    }
+    .contact-form input:focus, .contact-form textarea:focus {
+      border: 1px solid #0072ff; outline: none;
+    }
+    .contact-form button {
+      background: linear-gradient(90deg,#0072ff,#00c6ff);
+      color: #fff; border: none; padding: 0.8rem 1.5rem;
+      border-radius: 30px; cursor: pointer; font-weight: bold;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .contact-form button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg,#00c6ff,#0072ff);
+    }
+    .contact-form button:active { transform: scale(0.9); }
+
+    /* FOOTER */
+    footer {
+      background: linear-gradient(90deg,#0072ff,#00c6ff);
+      color: #fff; text-align: center; padding: 1.5rem; margin-top: 2rem;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeDown { from {opacity:0; transform:translateY(-50px);} to {opacity:1; transform:translateY(0);} }
+    @keyframes fadeUp { from {opacity:0; transform:translateY(50px);} to {opacity:1; transform:translateY(0);} }
+    @keyframes popIn { from {opacity:0; transform:scale(0);} to {opacity:1; transform:scale(1);} }
+
+    /* FULLSCREEN DARK THEME MENU (APPLIED ON MOBILE) */
+    @media(max-width:768px){
+      nav ul {
+        position: fixed; /* Use fixed for true full screen coverage */
+        top: 0; left: 0;
+        width: 100%; height: 100vh; /* Make it cover the full viewport */
+        
+        /* --- Styles for Fullscreen Dark Theme --- */
+        background: linear-gradient(135deg, #2c3e50, #34495e); /* Dark blue/grey gradient */
+        padding: 0; /* Remove padding for full coverage */
+        border-radius: 0; 
+        box-shadow: none; 
+        gap: 2rem;
+        /* -------------------------------------- */
+        
+        flex-direction: column;
+        justify-content: center; /* Center links vertically */
+        align-items: center;
+        display: none;
+        z-index: 998;
+        transition: all 0.5s ease;
+      }
+      
+      nav ul.show { display: flex; }
+      
+      /* Update link styles for the new dark background */
+      nav ul li a { 
+        color: #ecf0f1; /* Light text for dark background */
+        font-size: 2rem; /* Make links larger for easier tapping */
+        padding: 1rem 2rem; 
+        width: auto; /* Allow link width to be natural */
+      }
+
+      nav ul li a:hover {
+        background: rgba(255, 255, 255, 0.1); /* Light hover effect */
+        transform: scale(1.1); /* Bring back a little animation */
+      }
+
+      .burger { display: flex; }
+    }
+
+    /* RESPONSIVE SLIDER */
+    @media(max-width:1024px) { .member img { width: 150px; height: 150px; } .slider-btn { font-size: 1.3rem; padding: 0.6rem 0.8rem; } }
+    @media(max-width:768px) { .member img { width: 130px; height: 130px; } .slider-btn { font-size: 1.2rem; padding: 0.5rem 0.7rem; } }
+    @media(max-width:480px) { .member img { width: 120px; height: 120px; } .slider-btn { font-size: 1rem; padding: 0.4rem 0.6rem; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">APDA</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#members">Members</a></li>
+      <li><a href="#activities">Activities</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="burger"><div></div><div></div><div></div></div>
+  </nav>
+
+  <header id="home">
+    <h1>Welcome to, <br> Amdanga Progressive Development Association</h1>
+    <p>Established 2025 • Kharagpur, WB, India<br>Empowering Citizens with Equality & Equity</p>
+    <a href="#about">Learn More</a>
+  </header>
+
+  <section id="about" class="about">
+    <h2>About Us</h2>
+    <p>
+      Amdanga Progressive Development Association is a non-governmental social welfare group founded in 2025,
+      committed to the welfare and development of communities in Kharagpur, West Bengal, India.
+      <br><br>
+      Our mission focuses on improving education, healthcare, environmental sustainability, and social empowerment.
+      We actively organize literacy programs, free health camps, skill development workshops for women, and
+      environmental conservation initiatives.
+      With a dedicated team of 10 members, we believe in fostering equality, equity, and community participation.
+      Through volunteer work, local collaborations, and consistent outreach programs, we aim to create a society
+      where every citizen has access to basic rights, education, and opportunities to thrive.
+      Join us in our journey to make Kharagpur a model town for civic responsibility and social welfare.
+    </p>
+  </section>
+
+  <section id="members">
+    <h2>Our Team</h2>
+    <div class="slider-container">
+      <button class="slider-btn prev">❮</button>
+      <div class="member-slider">
+        <div class="member">
+        <img src="" alt="Samarjit Das Adhikary">
+        <h3>Samarjit Das Adhikary</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+918617579337" class="phone-btn">Call</a>
+          <a href="https://wa.me/918617579337" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Uttam Makur">
+        <h3>Uttam Makur</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+917001787001" class="phone-btn">Call</a>
+          <a href="https://wa.me/917001787001" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Samiran Pradhan">
+        <h3>Samiran Pradhan</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+918016528710" class="phone-btn">Call</a>
+          <a href="https://wa.me/918016528710" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Amitava Satpathi">
+        <h3>Amitava Satpathi</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+919434804508" class="phone-btn">Call</a>
+          <a href="https://wa.me/919434804508" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Amar Rauth">
+        <h3>Amar Rauth</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+916295573523" class="phone-btn">Call</a>
+          <a href="https://wa.me/916295573523" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Basanta Ans">
+        <h3>Basanta Ans</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+919002421892" class="phone-btn">Call</a>
+          <a href="https://wa.me/919002421892" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Amit kumar Maity">
+        <h3>Amit kumar Maity</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+919876555123" class="phone-btn">Call</a>
+          <a href="https://wa.me/919876555123" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Kalu Da">
+        <h3>Kalu Da</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+919812345222" class="phone-btn">Call</a>
+          <a href="https://wa.me/919812345222" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Bala Da">
+        <h3>Bala Da</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+919876555987" class="phone-btn">Call</a>
+          <a href="https://wa.me/919876555987" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+
+      <div class="member">
+        <img src="" alt="Ava Anderson">
+        <h3>Rajesh Kumar Roy</h3>
+        <p>Designation Here....</p>
+        <div class="contact-buttons">
+          <a href="tel:+919812345333" class="phone-btn">Call</a>
+          <a href="https://wa.me/919812345333" target="_blank" class="whatsapp-btn">WhatsApp</a>
+          <a href="https://maps.google.com?q=Kharagpur,WB,India" target="_blank" class="map-btn">Map</a>
+        </div>
+      </div>
+    </div>
+    <button class="slider-btn next">❯</button>
+  </div>
+</section>
+
+  <section id="activities">
+    <h2>Our Activities</h2>
+    <div class="activities-list">
+      <div class="activity"><h3>Education Drives</h3><p>Free coaching classes, literacy programs, and school support for underprivileged children.</p></div>
+      <div class="activity"><h3>Healthcare Camps</h3><p>Regular free health check-ups, blood donation camps, and awareness drives.</p></div>
+      <div class="activity"><h3>Women Empowerment</h3><p>Skill development workshops, vocational training, and self-help group support.</p></div>
+      <div class="activity"><h3>Road Development</h3><p>Development of roads, drains, and other infrastructure in rural areas.</p></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <form class="contact-form" onsubmit="sendMessage(event)">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 Amdanga Progressive Development Association | Built with ❤️ by Tech Nitro</p>
+  </footer>
+
+  <script>
+    // NAVBAR BURGER (REFINED JS)
+    const burger = document.querySelector('.burger');
+    const navLinks = document.querySelector('.nav-links');
+    const navLinksList = document.querySelectorAll('.nav-links li a'); // Select all links
+
+    const toggleMenu = () => {
+      burger.classList.toggle('active');
+      navLinks.classList.toggle('show');
+    };
+
+    burger.addEventListener('click', toggleMenu);
+
+    // Close menu when a link is clicked (improved mobile UX)
+    navLinksList.forEach(link => {
+      link.addEventListener('click', () => {
+        // Check if the menu is open before closing
+        if (navLinks.classList.contains('show')) {
+          toggleMenu(); 
+        }
+      });
+    });
+
+    // SECTION REVEAL (KEPT)
+    const sections = document.querySelectorAll("section");
+    const revealOnScroll = () => {
+      const triggerBottom = window.innerHeight * 0.85;
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        if (sectionTop < triggerBottom) section.classList.add("visible");
+      });
+    };
+    window.addEventListener("scroll", revealOnScroll);
+    revealOnScroll();
+
+    // CONTACT FORM (KEPT)
+    function sendMessage(e) {
+      e.preventDefault();
+      alert("✅ Thank you! Your message has been sent.");
+      document.querySelector('.contact-form').reset();
+    }
+
+    // TEAM SLIDER LOGIC (KEPT)
+    const slider = document.querySelector('.member-slider');
+    const prev = document.querySelector('.prev');
+    const next = document.querySelector('.next');
+    const members = document.querySelectorAll('.member');
+    let index = 0;
+
+    function showSlide(i){
+      const total = members.length;
+      if(i < 0) index = total - 1;
+      else if(i >= total) index = 0;
+      else index = i;
+      slider.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    prev.addEventListener('click', () => showSlide(index - 1));
+    next.addEventListener('click', () => showSlide(index + 1));
+
+    setInterval(() => showSlide(index + 1), 4000);
+    showSlide(index);
+  </script>
+</body>
+</html>
